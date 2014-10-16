@@ -13,29 +13,31 @@ import org.jgrapht.ext.StringNameProvider;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
+class MyIntegerEdgeNameProvider extends IntegerEdgeNameProvider<DefaultWeightedEdge>{
+	
+	SimpleDirectedWeightedGraph<String,DefaultWeightedEdge> graph;
+	
+	public MyIntegerEdgeNameProvider(SimpleDirectedWeightedGraph<String,DefaultWeightedEdge> g){
+		this.graph = g;
+	}
+	
+	@Override
+	public String getEdgeName(DefaultWeightedEdge edge) {
+		// TODO Auto-generated method stub
+		return this.graph.getEdgeWeight(edge)+"";
+	}
+	
+}
+
 public class WebOfThoughtMain {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		WebMaker m =new WebMaker("http://en.wikipedia.org/wiki/Affluenza",null);
 		try {
-			class MyIntegerEdgeNameProvider extends IntegerEdgeNameProvider<DefaultWeightedEdge>{
-				
-				SimpleDirectedWeightedGraph<String,DefaultWeightedEdge> graph;
-				
-				public MyIntegerEdgeNameProvider(SimpleDirectedWeightedGraph<String,DefaultWeightedEdge> g){
-					this.graph = g;
-				}
-				
-				@Override
-				public String getEdgeName(DefaultWeightedEdge edge) {
-					// TODO Auto-generated method stub
-					return this.graph.getEdgeWeight(edge)+"";
-				}
-				
-			}
+			SimpleDirectedWeightedGraph<String,DefaultWeightedEdge> graph = WebWalker.prune(m.existingNodes,"Affluenza",2,1);
 			IntegerEdgeNameProvider<DefaultWeightedEdge> i = new MyIntegerEdgeNameProvider(m.existingNodes);
-			new DOTExporter<String, DefaultWeightedEdge>(new IntegerNameProvider<String>(), new StringNameProvider<String>(),i ).export(new FileWriter(new File("D:/image.dot")), m.existingNodes);
+			new DOTExporter<String, DefaultWeightedEdge>(new IntegerNameProvider<String>(), new StringNameProvider<String>(),i ).export(new FileWriter(new File("D:/image.dot")), graph);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

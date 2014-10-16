@@ -6,10 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-
-
-
-import org.jgraph.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jsoup.Jsoup;
@@ -53,16 +49,15 @@ public class WebMaker {
 						(text.isEmpty() || url.isEmpty()) || !url.contains("wiki") ||
 						(text.startsWith("ISBN") ||text.equals("edit")));
 				else{
-					
-						urls.add(url);
 					String tempStr = body;
 					int reps = 0;
-					while(e.text() != "" && tempStr.indexOf(e.text()) >= 0){
-						tempStr = tempStr.substring(tempStr.indexOf(e.text())+e.text().length());
+					while(text != "" && tempStr.indexOf(text) >= 0){
+						tempStr = tempStr.substring(tempStr.indexOf(text)+text.length());
 						reps++;
 					}
-					if(reps > 1 && !e.text().toLowerCase().equals( title.toLowerCase())) {
-						phrases.put(e.text().replace("\"", ""),reps);
+					if(reps > 1 && !text.toLowerCase().equals(title.toLowerCase()) && !url.contains(":")) {
+						urls.add(url);
+						phrases.put(text.replace("\"", ""),reps);
 					}
 				}
 			}
@@ -76,7 +71,6 @@ public class WebMaker {
 				if(e != null)this.existingNodes.setEdgeWeight(e, phrases.get(s));
 			}
 			for(String s:urls){
-				if(!s.contains("http") && !s.contains(".m."))
 					this.processPage("http://en.wikipedia.org"+s,hops-1,title);
 			}
 		} catch (IOException e) {
